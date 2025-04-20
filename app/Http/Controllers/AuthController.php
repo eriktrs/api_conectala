@@ -11,7 +11,11 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
-
+    /**
+     * Create a login method to authenticate users.
+     *
+     * @return void
+     */
     public function login(Request $request)
     {
         // Validate the request
@@ -53,6 +57,11 @@ class AuthController extends Controller
         ], 202);
     }
 
+    /**
+     * Create a register method to register users.
+     *
+     * @return void
+     */
     public function register(Request $request)
     {
         // Validate the request
@@ -69,7 +78,8 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-       $token = auth()->login($user);;
+        // Generate a token for the user
+        $token = auth()->login($user);;
 
         return response()->json([
             'status' => 'success',
@@ -79,9 +89,14 @@ class AuthController extends Controller
                 'token' => $token,
                 'type' => 'bearer',
             ]
-        ]);
+        ], 201);
     }
 
+    /**
+     * Create a logout method to logout users.
+     *
+     * @return void
+     */
     public function logout()
     {
         // Logout the user
@@ -93,9 +108,31 @@ class AuthController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Successfully logged out',
-        ]);
+        ], 200);
     }
 
+    /**
+     * Create a me method to get the authenticated user.
+     *
+     * @return void
+     */
+    public function me()
+    {
+        // Get the authenticated user
+        $user = auth()->user();
+
+        // Return the user as a JSON response
+        return response()->json([
+            'status' => 'success',
+            'user' => $user->only('name', 'email'),
+        ], 200);
+    }
+
+    /**
+     * Create a refresh method to refresh the JWT token.
+     *
+     * @return void
+     */
     public function refresh()
     {
         // Refresh the token
@@ -107,6 +144,6 @@ class AuthController extends Controller
                 'type' => 'bearer',
                 'expires_in' => auth()->factory()->getTTL() * 60
             ]
-        ]);
+        ], 200);
     }
 }
