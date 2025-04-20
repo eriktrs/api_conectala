@@ -11,11 +11,15 @@ use App\Http\Middleware\JwtMiddleware;
 // Authentication routes
 
 Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');;
 
 Route::middleware([JwtMiddleware::class])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/me', [AuthController::class, 'me']);
 });
+
+// This route is used to refresh the JWT token
+Route::post('/refresh', [AuthController::class, 'refresh']);
 
 // User routes
 Route::middleware([JwtMiddleware::class])->group(function () {
