@@ -32,6 +32,13 @@ class UserController extends Controller
     public function show(Request $request)
     {
         // Retrieve the user by ID
+        $authUser = Auth::user();
+        $targetUser = User::find($request->id);
+
+        // Check user authorization
+        Gate::authorize('view', $authUser, $targetUser);
+
+        // Retrieve the user by ID
         $user = User::find($request->id);
 
         // If user not found, return an error response
