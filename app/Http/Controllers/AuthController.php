@@ -24,9 +24,10 @@ class AuthController extends Controller
             'password' => 'required|string|min:6',
         ]);
 
-        // If the credentials are invalid, return an error response
+        // Validate the credentials
         $credentials = $request->only('email', 'password');
 
+        // If the credentials are invalid, return an error response
         if (! $token = auth()->attempt($credentials)) {
             return response()->json([
                 'error' => 'Unauthorized'
@@ -34,7 +35,6 @@ class AuthController extends Controller
         }
 
         // If authentication is successful, get the user
-        // $user = User::where('email', $request->email)->first();
         $user = auth()->userOrFail();
 
         // Check if the user password is valid
