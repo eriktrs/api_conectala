@@ -14,13 +14,45 @@ class UserController extends Controller
      */
     public function index()
     {
+        // Determine the number of users to display per page
+        $perPage = min(request()->input('per_page', 10), 100);
+
+        // Determine the sorting criteria
+        $sortBy = request()->input('sort_by', 'id');
+        $sortOrder = request()->input('sort_order', 'asc');
+
+        // Build the query
+        $query = User::query();
+
+        // Apply filters based on request parameters
+        if (request()->filled('name')) {
+            $query->where('name', 'like', '%' . request()->input('name') . '%');
+        }
+
+        if (request()->filled('email')) {
+            $query->where('email', 'like', '%' . request()->input('email') . '%');
+        }
+
+        if ($sortBy && in_array($sortBy, ['id', 'name', 'email'])) {
+            $query->orderBy($sortBy, $sortOrder);
+        }
+
         // Retrieve all users
-        $users = User::get();
+        $users = User::paginate($perPage);
+
         // Return the users as a JSON response
         return response()->json(
             [
                 'status' => 'success',
-                'data' => $users,
+                'data' => $users->items(),
+                'pagination' => [
+                    'total' => $users->total(),
+                    'current_page' => $users->currentPage(),
+                    'last_page' => $users->lastPage(),
+                    'per_page' => $users->perPage(),
+                    'next_page_url' => $users->nextPageUrl(),
+                    'prev_page_url' => $users->previousPageUrl(),
+                ],
             ],
             200
         );
