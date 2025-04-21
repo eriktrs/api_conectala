@@ -16,10 +16,8 @@ Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,
 Route::middleware([JwtMiddleware::class])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
+    Route::post('/refresh', [AuthController::class, 'refresh']);
 });
-
-// This route is used to refresh the JWT token
-Route::post('/refresh', [AuthController::class, 'refresh']);
 
 // User routes
 Route::middleware([JwtMiddleware::class])->group(function () {

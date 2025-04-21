@@ -135,6 +135,14 @@ class AuthController extends Controller
      */
     public function refresh()
     {
+        // Check if the user is authenticated
+        if (!auth()->check()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized'
+            ], 401);
+        }
+
         // Refresh the token
         return response()->json([
             'status' => 'success',
