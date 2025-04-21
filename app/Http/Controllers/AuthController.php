@@ -21,7 +21,7 @@ class AuthController extends Controller
         // Validate the request
         $request->validate([
             'email' => 'required|string|email',
-            'password' => 'required|string|unique:users,password',
+            'password' => 'required|string|min:6',
         ]);
 
         // If the credentials are invalid, return an error response
